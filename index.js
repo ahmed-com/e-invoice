@@ -24,8 +24,9 @@ app.use((req, res, next) => {
 app.post('/sign',(req,res,next)=>{
     const signOptions = req.body.signOptions;
     const document = req.body.document;
+    const jsonStr = JSON.stringify(document);
 
-    const signature = signer.signFile(document,signOptions);
+    const signature = signer.signFile(jsonStr,signOptions);
     res.status(200).json({signature});
 })
 

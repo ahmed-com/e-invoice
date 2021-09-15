@@ -13,7 +13,7 @@ class Signer {
             signOptions = {contentType: 1, signingTime: 1, messageDigest: 1, signingCertificateV2: 1}
         }
         
-        const crypt = getCrypt(cert, signOptions);
+        const crypt = this.getCrypt(cert, signOptions);
     
         const base64Sig = crypt.SignStringENC(jsonStr);
         if (crypt.LastMethodSuccess == false) throw new Error(crypt.LastErrorText);

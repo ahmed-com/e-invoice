@@ -3,7 +3,10 @@ const chilkat = require('@chilkat/ck-node14-win64');
 class Signer {
     constructor(){
         const cert = new chilkat.Cert()
-        cert.SmartCardPin = process.env.SCARDPIN || cert.SmartCardPin;
+        if(process.env.SCARDPIN){
+            console.log("PIN used is :",process.env.SCARDPIN);
+            cert.SmartCardPin = process.env.SCARDPIN;
+        }
         const isCertLoaded = cert.LoadFromSmartcard("")
         if(isCertLoaded !== true) throw new Error(cert.LastErrorText)
         this.cert = cert;

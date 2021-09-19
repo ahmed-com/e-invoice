@@ -4,7 +4,6 @@ class Signer {
     constructor(){
         const cert = new chilkat.Cert()
         if(process.env.SCARDPIN){
-            console.log("PIN used is :",process.env.SCARDPIN);
             cert.SmartCardPin = process.env.SCARDPIN;
         }
         const isCertLoaded = cert.LoadFromSmartcard("")
@@ -38,15 +37,15 @@ class Signer {
         crypt.CmsOptions = cmsOptions.Emit()
     
         crypt.CadesEnabled = true
-        crypt.HashAlgorithm = "sha256"
-    
+        
         const jsonSigningAttrs = new chilkat.JsonObject();
         jsonSigningAttrs.UpdateInt("contentType",options.contentType);
         jsonSigningAttrs.UpdateInt("signingTime",options.signingTime);
         jsonSigningAttrs.UpdateInt("messageDigest",options.messageDigest);
         jsonSigningAttrs.UpdateInt("signingCertificateV2",options.signingCertificateV2);
         crypt.SigningAttributes = jsonSigningAttrs.Emit();
-    
+        
+        crypt.HashAlgorithm = "sha256"
         crypt.IncludeCertChain = options.includeCertChain || false;
         crypt.EncodingMode = options.encodingMode || "base64";
         crypt.Charset = options.charset || "utf-8";

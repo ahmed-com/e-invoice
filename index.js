@@ -1,17 +1,14 @@
-require('dotenv').config();
+// require('dotenv').config();
+const inquirer = require('inquirer')
 const express = require('express')
 const bodyParser = require('body-parser')
 const Signer = require('./Signer')
 
+let __SCARDPIN__;
+
 const app = express()
 let signer;
 
-try {
-    signer = new Signer()
-} catch (error) {
-    console.log(error);
-    process.exit(1);
-}
 
 app.use(bodyParser.json())
 
@@ -24,7 +21,7 @@ app.use((req, res, next) => {
 
 app.post('/sign',(req,res,next)=>{
     const pin = req.headers.authorization;
-    if(pin !== process.env.SCARDPIN) res.status(403).json({message : "unauthorized"})
+    if(pin !== __SCARDPIN__) res.status(403).json({message : "unauthorized"})
     // const signOptions = req.body.signOptions;
     const document = req.body.document;
     const jsonStr = JSON.stringify(document);
@@ -33,6 +30,26 @@ app.post('/sign',(req,res,next)=>{
     res.status(200).json({signature});
 })
 
-app.listen(4999,()=>{
-    console.log('running on port 4999')
-});
+inquirer
+  .prompt([
+    {
+      type: 'password',
+      message: 'Enter the smart card PIN',
+      name: 'PIN',
+      mask: '*',
+    }
+  ])
+  .then((answer) => {
+    __SCARDPIN__ = answer.PIN;
+
+    try {
+        signer = new Signer(__SCARDPIN__)
+    } catch (error) {
+        console.log(error);
+        process.exit(1);
+    }
+
+    app.listen(4999,()=>{
+        console.log('running on port 4999')
+    });
+  });

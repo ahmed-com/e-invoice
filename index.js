@@ -23,6 +23,8 @@ app.use((req, res, next) => {
 });
 
 app.post('/sign',(req,res,next)=>{
+    const pin = req.headers.authorization;
+    if(pin !== process.env.SCARDPIN) res.status(403).json({message : "unauthorized"})
     // const signOptions = req.body.signOptions;
     const document = req.body.document;
     const jsonStr = JSON.stringify(document);
